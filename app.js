@@ -73,39 +73,63 @@ userDetailsForm.addEventListener('submit', (e) => {
 
 // Add this new function to handle profile display
 function updateProfileDisplay(user, userData) {
-    userEmailDiv.innerHTML = `
-        <div class="user-details">
-            <p><i class="fas fa-user"></i> <span>${userData.name}</span></p>
-            <p><i class="fas fa-envelope"></i> <span>${user.email}</span></p>
-            <p><i class="fas fa-birthday-cake"></i> <span>Age: ${userData.age}</span></p>
-            <p><i class="fas fa-venus-mars"></i> <span>Gender: ${userData.gender}</span></p>
+    // Create a clean display of user data
+    const userProfile = `
+        <div class="profile-container">
+            <img id="profilePic" src="${user.photoURL || 'https://via.placeholder.com/100'}" alt="Profile Picture">
+            <div class="profile-info">
+                <h2>${userData.name}</h2>
+                <div class="info-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>${user.email}</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-birthday-cake"></i>
+                    <span>${userData.age} years old</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-venus-mars"></i>
+                    <span>${userData.gender}</span>
+                </div>
+            </div>
+            <button id="logoutButton" class="logout-btn">Logout</button>
         </div>
     `;
-    profilePic.src = user.photoURL || 'https://via.placeholder.com/100';
+    
+    userInfo.innerHTML = userProfile;
     userInfo.classList.add('fade-in');
+
+    // Reattach logout button event listener
+    document.getElementById('logoutButton').addEventListener('click', () => {
+        firebase.auth().signOut();
+    });
 }
 
+// Update the auth state change handler
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
         loginButton.style.display = 'none';
         
+        // Fetch user data from Firestore
         db.collection('users').doc(user.uid).get()
             .then((doc) => {
                 if (doc.exists) {
+                    const userData = doc.data();
                     userDetailsForm.style.display = 'none';
                     userInfo.style.display = 'block';
-                    // Update profile with stored data
-                    updateProfileDisplay(user, doc.data());
+                    updateProfileDisplay(user, userData);
                 } else {
                     userDetailsForm.style.display = 'block';
                     userInfo.style.display = 'none';
                 }
+            })
+            .catch(error => {
+                console.error("Error fetching user data:", error);
             });
     } else {
         loginButton.style.display = 'block';
         userDetailsForm.style.display = 'none';
         userInfo.style.display = 'none';
-        userEmailDiv.innerHTML = '';
-        profilePic.src = '';
+        userInfo.innerHTML = ''; // Clear the user info
     }
 }); 
