@@ -5,6 +5,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -23,6 +24,8 @@
             border-radius: 15px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s ease;
+            width: 300px;
+            margin: 0 auto;
         }
         .container:hover {
             transform: translateY(-5px);
@@ -38,6 +41,9 @@
             font-weight: 500;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3);
+            width: 200px;
+            margin: 0 auto;
+            display: inline-block;
         }
         button:hover {
             transform: translateY(-2px);
