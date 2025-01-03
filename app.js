@@ -14,6 +14,7 @@ firebase.initializeApp(firebaseConfig);
 firebase.analytics(); // Initialize Analytics
 
 const loginButton = document.getElementById('loginButton');
+const logoutButton = document.getElementById('logoutButton');
 const userInfo = document.getElementById('userInfo');
 const userEmailDiv = document.getElementById('userEmail');
 const profilePic = document.getElementById('profilePic');
@@ -32,6 +33,14 @@ loginButton.addEventListener('click', () => {
         });
 });
 
+logoutButton.addEventListener('click', () => {
+    firebase.auth().signOut().then(() => {
+        console.log('Logged out successfully');
+    }).catch((error) => {
+        console.error('Logout error:', error);
+    });
+});
+
 // Add initialization check
 firebase.auth().onAuthStateChanged((user) => {
     console.log('Auth state changed:', user ? 'logged in' : 'logged out'); // Debug log
@@ -39,8 +48,11 @@ firebase.auth().onAuthStateChanged((user) => {
         // User is signed in
         loginButton.style.display = 'none';
         userInfo.style.display = 'block';
-        userEmailDiv.innerHTML = `Email: ${user.email}`;
+        userEmailDiv.innerHTML = `<i class="fas fa-envelope"></i> ${user.email}`;
         profilePic.src = user.photoURL || 'https://via.placeholder.com/100';
+        
+        // Add animation class
+        userInfo.classList.add('fade-in');
     } else {
         // User is signed out
         loginButton.style.display = 'block';
