@@ -49,6 +49,7 @@ logoutButton.addEventListener('click', () => {
 
 userDetailsForm.addEventListener('submit', (e) => {
     e.preventDefault();
+    console.log('Form submitted');
     const user = firebase.auth().currentUser;
     
     const userData = {
@@ -59,23 +60,28 @@ userDetailsForm.addEventListener('submit', (e) => {
         createdAt: new Date()
     };
 
+    console.log('Saving user data:', userData);
     db.collection('users').doc(user.uid).set(userData)
         .then(() => {
+            console.log('User data saved successfully');
             userDetailsForm.style.display = 'none';
             userInfo.style.display = 'block';
         })
         .catch(error => {
+            console.error('Error saving user details:', error);
             alert('Error saving user details: ' + error.message);
         });
 });
 
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
+        console.log('User logged in:', user.email);
         loginButton.style.display = 'none';
         
         // Check if user details exist in Firestore
         db.collection('users').doc(user.uid).get()
             .then((doc) => {
+                console.log('Checking user details:', doc.exists ? 'found' : 'not found');
                 if (doc.exists) {
                     // User details exist, show profile
                     userDetailsForm.style.display = 'none';
@@ -85,9 +91,13 @@ firebase.auth().onAuthStateChanged((user) => {
                     userInfo.classList.add('fade-in');
                 } else {
                     // New user, show form
+                    console.log('Showing user details form');
                     userDetailsForm.style.display = 'block';
                     userInfo.style.display = 'none';
                 }
+            })
+            .catch(error => {
+                console.error('Error checking user details:', error);
             });
     } else {
         loginButton.style.display = 'block';
