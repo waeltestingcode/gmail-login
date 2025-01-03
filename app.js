@@ -75,10 +75,10 @@ userDetailsForm.addEventListener('submit', (e) => {
 function updateProfileDisplay(user, userData) {
     userEmailDiv.innerHTML = `
         <div class="user-details">
-            <p><i class="fas fa-user"></i> ${userData.name}</p>
-            <p><i class="fas fa-envelope"></i> ${user.email}</p>
-            <p><i class="fas fa-birthday-cake"></i> Age: ${userData.age}</p>
-            <p><i class="fas fa-venus-mars"></i> Gender: ${userData.gender}</p>
+            <p><i class="fas fa-user"></i> <span>${userData.name}</span></p>
+            <p><i class="fas fa-envelope"></i> <span>${user.email}</span></p>
+            <p><i class="fas fa-birthday-cake"></i> <span>Age: ${userData.age}</span></p>
+            <p><i class="fas fa-venus-mars"></i> <span>Gender: ${userData.gender}</span></p>
         </div>
     `;
     profilePic.src = user.photoURL || 'https://via.placeholder.com/100';
