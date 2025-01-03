@@ -14,7 +14,9 @@ firebase.initializeApp(firebaseConfig);
 firebase.analytics(); // Initialize Analytics
 
 const loginButton = document.getElementById('loginButton');
+const userInfo = document.getElementById('userInfo');
 const userEmailDiv = document.getElementById('userEmail');
+const profilePic = document.getElementById('profilePic');
 
 loginButton.addEventListener('click', () => {
     console.log('Login button clicked'); // Debug log
@@ -34,11 +36,16 @@ loginButton.addEventListener('click', () => {
 firebase.auth().onAuthStateChanged((user) => {
     console.log('Auth state changed:', user ? 'logged in' : 'logged out'); // Debug log
     if (user) {
+        // User is signed in
         loginButton.style.display = 'none';
-        userEmailDiv.style.display = 'block';
-        userEmailDiv.innerHTML = `Your email: ${user.email}`;
+        userInfo.style.display = 'block';
+        userEmailDiv.innerHTML = `Email: ${user.email}`;
+        profilePic.src = user.photoURL || 'https://via.placeholder.com/100';
     } else {
+        // User is signed out
         loginButton.style.display = 'block';
-        userEmailDiv.style.display = 'none';
+        userInfo.style.display = 'none';
+        userEmailDiv.innerHTML = '';
+        profilePic.src = '';
     }
 }); 
