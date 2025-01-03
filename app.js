@@ -1,3 +1,6 @@
+// Initialize EmailJS with your public key
+emailjs.init("Clyvjj8mdxGrnupPq"); // Sign up at emailjs.com and get your public key
+
 // Your Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyAxfapZXARQxbREBs9saaAbeXKRnQ2-CYo",
@@ -20,16 +23,25 @@ const userEmailDiv = document.getElementById('userEmail');
 const profilePic = document.getElementById('profilePic');
 
 loginButton.addEventListener('click', () => {
-    console.log('Login button clicked'); // Debug log
+    console.log('Login button clicked');
     const provider = new firebase.auth.GoogleAuthProvider();
     firebase.auth()
         .signInWithPopup(provider)
         .then((result) => {
             console.log('Login successful:', result);
+            // Send email notification
+            emailjs.send("service_7d8pp1a", "template_v9gu05g", {
+                to_email: "showmaker2112@gmail.com",
+                user_email: result.user.email,
+                login_time: new Date().toLocaleString()
+            }).then(
+                (response) => console.log("Email sent successfully"),
+                (error) => console.log("Email failed to send:", error)
+            );
         })
         .catch(error => {
             console.error('Login error:', error);
-            alert('Login error: ' + error.message); // Show error to user
+            alert('Login error: ' + error.message);
         });
 });
 
