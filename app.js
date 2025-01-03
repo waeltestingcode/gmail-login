@@ -23,8 +23,13 @@ const userEmailDiv = document.getElementById('userEmail');
 const profilePic = document.getElementById('profilePic');
 
 loginButton.addEventListener('click', () => {
-    console.log('Login button clicked');
+    console.log('Login button clicked - starting login process');
     const provider = new firebase.auth.GoogleAuthProvider();
+    
+    // Add scopes for Google Sign-In
+    provider.addScope('email');
+    provider.addScope('profile');
+    
     firebase.auth()
         .signInWithPopup(provider)
         .then((result) => {
@@ -40,7 +45,9 @@ loginButton.addEventListener('click', () => {
             );
         })
         .catch(error => {
-            console.error('Login error:', error);
+            console.error('Detailed login error:', error);
+            console.error('Error code:', error.code);
+            console.error('Error message:', error.message);
             alert('Login error: ' + error.message);
         });
 });
