@@ -28,16 +28,25 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        #userEmail {
+        #userInfo {
             display: none;
             margin-top: 20px;
+        }
+        #profilePic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <button id="loginButton">Login with Gmail</button>
-        <div id="userEmail"></div>
+        <div id="userInfo">
+            <img id="profilePic" alt="Profile Picture">
+            <div id="userEmail"></div>
+        </div>
     </div>
     <script src="app.js"></script>
 </body>
