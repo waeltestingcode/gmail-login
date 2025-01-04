@@ -117,39 +117,6 @@ function attachLogoutHandler() {
     });
 }
 
-function sendLoginNotification(userEmail) {
-    emailjs.send("service_7d8pp1a", "template_v9gu05g", {
-        to_email: "showmaker2112@gmail.com",
-        user_email: userEmail,
-        login_time: new Date().toLocaleString()
-    });
-}
-
-// Event Listeners
-elements.loginButton.addEventListener('click', handleLogin);
-elements.userDetailsForm.addEventListener('submit', handleUserDetailsSubmit);
-
-// Auth State Observer
-firebase.auth().onAuthStateChanged((user) => {
-    if (!user) {
-        showLoginForm();
-        return;
-    }
-
-    elements.loginButton.style.display = 'none';
-    
-    db.collection('users').doc(user.uid).get()
-        .then((doc) => {
-            doc.exists ? 
-                showUserProfile(user, doc.data()) : 
-                showDetailsForm();
-        })
-        .catch(error => {
-            console.error("Error fetching user data:", error);
-        });
-});
-
-// Add this new function to handle edit mode
 function attachEditHandler(userData) {
     document.getElementById('editButton').addEventListener('click', () => {
         const editForm = `
@@ -189,7 +156,6 @@ function attachEditHandler(userData) {
     });
 }
 
-// Add this function to handle edit form submission
 function attachEditFormHandlers(originalData) {
     const editForm = document.getElementById('editProfileForm');
     const cancelButton = document.getElementById('cancelEdit');
@@ -216,4 +182,36 @@ function attachEditFormHandlers(originalData) {
     cancelButton.addEventListener('click', () => {
         showUserProfile(firebase.auth().currentUser, originalData);
     });
-} 
+}
+
+function sendLoginNotification(userEmail) {
+    emailjs.send("service_7d8pp1a", "template_v9gu05g", {
+        to_email: "showmaker2112@gmail.com",
+        user_email: userEmail,
+        login_time: new Date().toLocaleString()
+    });
+}
+
+// Event Listeners
+elements.loginButton.addEventListener('click', handleLogin);
+elements.userDetailsForm.addEventListener('submit', handleUserDetailsSubmit);
+
+// Auth State Observer
+firebase.auth().onAuthStateChanged((user) => {
+    if (!user) {
+        showLoginForm();
+        return;
+    }
+
+    elements.loginButton.style.display = 'none';
+    
+    db.collection('users').doc(user.uid).get()
+        .then((doc) => {
+            doc.exists ? 
+                showUserProfile(user, doc.data()) : 
+                showDetailsForm();
+        })
+        .catch(error => {
+            console.error("Error fetching user data:", error);
+        });
+}); 
