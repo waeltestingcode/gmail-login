@@ -92,23 +92,42 @@ function handleLogin() {
         });
 }
 
-function handleUserDetailsSubmit(e) {
+// Add this function to check if name exists
+async function isNameTaken(name, currentUserId) {
+    const snapshot = await db.collection('users')
+        .where('name', '==', name)
+        .get();
+    
+    // Check if any other user has this name
+    return snapshot.docs.some(doc => doc.id !== currentUserId);
+}
+
+// Modify the handleUserDetailsSubmit function for initial registration
+async function handleUserDetailsSubmit(e) {
     e.preventDefault();
     const user = firebase.auth().currentUser;
+    const newName = document.getElementById('name').value;
     
-    const userData = {
-        email: user.email,
-        name: document.getElementById('name').value,
-        age: parseInt(document.getElementById('age').value),
-        gender: document.getElementById('gender').value,
-        createdAt: new Date()
-    };
+    try {
+        // Check if name is taken
+        if (await isNameTaken(newName, user.uid)) {
+            alert('This name is already taken. Please choose another name.');
+            return;
+        }
 
-    db.collection('users').doc(user.uid).set(userData)
-        .then(() => showUserProfile(user, userData))
-        .catch(error => {
-            alert('Error saving user details: ' + error.message);
-        });
+        const userData = {
+            email: user.email,
+            name: newName,
+            age: parseInt(document.getElementById('age').value),
+            gender: document.getElementById('gender').value,
+            createdAt: new Date()
+        };
+
+        await db.collection('users').doc(user.uid).set(userData);
+        showUserProfile(user, userData);
+    } catch (error) {
+        alert('Error saving user details: ' + error.message);
+    }
 }
 
 function attachLogoutHandler() {
@@ -156,27 +175,38 @@ function attachEditHandler(userData) {
     });
 }
 
+// Modify the attachEditFormHandlers function for editing
 function attachEditFormHandlers(originalData) {
     const editForm = document.getElementById('editProfileForm');
     const cancelButton = document.getElementById('cancelEdit');
     
-    editForm.addEventListener('submit', (e) => {
+    editForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const user = firebase.auth().currentUser;
+        const newName = document.getElementById('editName').value;
         
-        const updatedData = {
-            ...originalData,
-            name: document.getElementById('editName').value,
-            age: parseInt(document.getElementById('editAge').value),
-            gender: document.getElementById('editGender').value,
-            updatedAt: new Date()
-        };
+        try {
+            // Only check for name uniqueness if the name has changed
+            if (newName !== originalData.name) {
+                if (await isNameTaken(newName, user.uid)) {
+                    alert('This name is already taken. Please choose another name.');
+                    return;
+                }
+            }
 
-        db.collection('users').doc(user.uid).update(updatedData)
-            .then(() => showUserProfile(user, updatedData))
-            .catch(error => {
-                alert('Error updating profile: ' + error.message);
-            });
+            const updatedData = {
+                ...originalData,
+                name: newName,
+                age: parseInt(document.getElementById('editAge').value),
+                gender: document.getElementById('editGender').value,
+                updatedAt: new Date()
+            };
+
+            await db.collection('users').doc(user.uid).update(updatedData);
+            showUserProfile(user, updatedData);
+        } catch (error) {
+            alert('Error updating profile: ' + error.message);
+        }
     });
 
     cancelButton.addEventListener('click', () => {
